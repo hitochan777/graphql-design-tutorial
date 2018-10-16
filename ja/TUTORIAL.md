@@ -16,12 +16,10 @@ GrahphQL APIを作る人すべてに便利だと思い今回公開すること�
 
 ## Intro
 
-Welcome! This document will walk you through designing a new GraphQL API (or a
-new piece of an existing GraphQL API). API design is a challenging
-task that strongly rewards iteration, experimentation, and a thorough
-understanding of your business domain.
+ようこそ! このドキュメントでは新しい(あるいは既存のものに追加する場合の)GraphQL APIの設計について一つづつ段階を踏みながら説明していきます。
+API設計は繰り返し・実験・ビジネスドメインの深い理解が強く求められる難しいタスクです。
 
-## Step Zero: Background
+## Step Zero: hai
 
 For the purposes of this tutorial, imagine you work at an e-commerce company.
 You have an existing GraphQL API exposing information about your products, but
