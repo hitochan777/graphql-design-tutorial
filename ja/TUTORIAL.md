@@ -19,32 +19,25 @@ GrahphQL APIを作る人すべてに便利だと思い今回公開すること�
 ようこそ! このドキュメントでは新しい(あるいは既存のものに追加する場合の)GraphQL APIの設計について一つづつ段階を踏みながら説明していきます。
 API設計は繰り返し・実験・ビジネスドメインの深い理解が強く求められる難しいタスクです。
 
-## Step Zero: hai
+## ステップゼロ: 背景
 
-For the purposes of this tutorial, imagine you work at an e-commerce company.
-You have an existing GraphQL API exposing information about your products, but
-very little else. However, your team just finished a project implementing
-"collections" in the back-end and wants to expose collections over the API as
-well.
+このチュートリアルを進めるに当たって、あなたはEコマースの会社で働いているとします。
+現状、既存のGraphQL APIは商品情報の他にはほとんど情報を提供していません。
+しかし、あなたのチームはバックエンドの"コレクション"を実装するプロジェクトをちょうど実装し終えたので、
+APIで提供したいと考えています。
 
-Collections are the new go-to method for grouping products; for example, you
-might have a collection of all of your t-shirts. Collections can be used for
-display purposes when browsing your website, and also for programmatic tasks
-(e.g. you may want to make a discount only apply to products in a certain
-collection).
+コレクションとは、商品をグループ化するための新たな便利な方法です。
+たとえば、Tシャツのコレクションを持っているかもしれません。
+コレクションは、ウェブサイトを閲覧する際の表示方法であったり、プログラム化されたタスクに使うことができます。
+（たとえば、ある特定のコレクションの商品にのみ割引を適用したいことがあるかもしれません）。
 
-On the back-end, your new feature has been implemented as follows:
-- All collections have some simple attributes like a title, a description body
-  (which may include HTML formatting), and an image.
-- You have two specific kinds of collections: "manual" collections where you
-  list the products you want them to include, and "automatic" collections where
-  you specify some rules and let the collection populate itself.
-- Since the product-to-collection relationship is many-to-many, you've got a
-  join table in the middle called `CollectionMembership`.
-- Collections, like products before them, can be either published (visible on
-  the storefront) or not.
+バックエンドでは、次のように新しい機能が実装されています。
+- すべてのコレクションは、タイトル、説明文 (HTMLフォーマットを含む)、画像のような幾つかのシンプルな属性を持っています。
+- 2種類のコレクションがあります。コレクションに含まれる製品をリストアップする「マニュアル」コレクションと、ルールに従って商品をリストアップする「自動」コレクションです。
+- 商品とコレクションの関係は多対多であるため、`CollectionMembership`というジョインテーブルを真ん中に持たせます。
+- コレクションは、これまでの商品と同様に、公開されている（店頭に表示されている）か、公開されていないかのどちらかです。
 
-With this background, you're ready to start thinking about your API design.
+このような背景がわかったので、API設計について考え始める準備が整いました。
 
 ## Step One: A Bird's-Eye View
 
