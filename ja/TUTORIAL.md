@@ -41,8 +41,8 @@ APIで提供したいと考えています。
 
 ## Step One: A Bird's-Eye View
 
-A naive version of the schema might look something like this (leaving out all
-the pre-existing types like `Product`):
+スキーマをナイーブに考える、以下のようになるかもしれません(`Product` のような既存の型は省略)。
+
 ```graphql
 interface Collection {
   id: ID!
@@ -82,6 +82,10 @@ type CollectionMembership {
 }
 ```
 
+4つのオブジェクトと1つのインターフェースだけとは言え、一見しただけではすでにかなり複雑になっています。
+また、モバイルアプリのコレクション機能などを提供するAPIこの時点ですべての機能を実装しているわけではないことははっきりわかります。
+このAPIを使用して、たとえばGoogle Appsなどを構築する場合に必要となるものです。我々の
+モバイルアプリのコレクション機能
 This is already decently complicated at a glance, even though it's only four
 objects and an interface. It also clearly doesn't implement all of the features
 that we would need if we're going to be using this API to build out e.g. our
