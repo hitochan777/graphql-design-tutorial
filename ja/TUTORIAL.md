@@ -39,7 +39,7 @@ APIで提供したいと考えています。
 
 このような背景がわかったので、API設計について考え始める準備が整いました。
 
-## Step One: A Bird's-Eye View
+## ステップ1: 俯瞰して見る
 
 スキーマをナイーブに考える、以下のようになるかもしれません(`Product` のような既存の型は省略)。
 
@@ -83,22 +83,15 @@ type CollectionMembership {
 ```
 
 4つのオブジェクトと1つのインターフェースだけとは言え、一見しただけではすでにかなり複雑になっています。
-また、モバイルアプリのコレクション機能などを提供するAPIこの時点ですべての機能を実装しているわけではないことははっきりわかります。
-このAPIを使用して、たとえばGoogle Appsなどを構築する場合に必要となるものです。我々の
-モバイルアプリのコレクション機能
-This is already decently complicated at a glance, even though it's only four
-objects and an interface. It also clearly doesn't implement all of the features
-that we would need if we're going to be using this API to build out e.g. our
-mobile app's collection feature.
+また、例えばモバイルアプリのコレクション機能を実装する場合に必要なすべてのAPIを実装しているわけではないことは自明です。
+この時点ですべての機能を実装しているわけではないことははっきりわかります。
 
-Let's take a step back. A decently complex GraphQL API will consist of many
-objects, related via multiple paths and with dozens of fields. Trying to design
-something like this all at once is a recipe for confusion and mistakes. Instead,
-you should start with a higher-level view first, focusing on just the types and
-their relations without worrying about specific fields or mutations.
-Basically think of an [Entity-Relationship model](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model)
-but with a few GraphQL-specific bits thrown in. If we shrink our naive schema
-down like that, we end up with the following:
+一歩前に戻ってみましょう。非常に複雑なGraphQL APIでは、沢山のオブジェクトが複数のパスや数多くのフィールドで関連づけられています。
+このようなものを一度にデザインしようとすると、混乱や間違いのもとになります。
+まず、特定のフィールドやmutationのことは考えるのではなく、
+型とその関係だけに焦点を当て、よりハイレベルの視点から始めてください。
+基本的にGraphQL固有の要素を持った、Entity-Relationshipモデルを想像してください。
+ナイーブなスキーマを縮小すると次のようになります。
 
 ```graphql
 interface Collection {
@@ -125,13 +118,10 @@ type CollectionMembership {
 }
 ```
 
-To get this simplified representation, I took out all scalar fields, all field
-names, and all nullability information. What you're left with still looks kind
-of like GraphQL but lets you focus on higher level of the types and their
-relationships.
+簡略化するためにのスカラーフィールド、フィールド名、およびのNULL値をとるかどうかの情報などをすべてを省略しました。
+簡略化の結果残ったのは、GraphQLのようなものですが、よりハイレベルのタイプとそれらの関係に集中できるようになっています。
 
-*Rule #1: Always start with a high-level view of the objects and their
-relationships before you deal with specific fields.*
+*ルール1: 特定のフィールドを扱う前に、常にオブジェクトとその関係のハイレベルなビューから始めてください。
 
 ## Step Two: A Clean Slate
 
