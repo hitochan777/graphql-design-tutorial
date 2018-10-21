@@ -221,7 +221,7 @@ REST APIでうまくいくものがGraphQLの良い選択であるとは考え�
 
 
 型をモデル化するクリーンな構造ができたので、ここまでは省略していたフィールドを戻して、
-詳細なレベルで再びデザインを考えられるようになりました。。
+詳細なレベルで再びデザインを考えられるようになりました。
 
 詳細を追加する前に、現時点で本当に必要かどうかを自問してください。
 データベースのカラム、モデルのプロパティ、またはRESTの属性が存在するかもしれないというだけで、
@@ -285,39 +285,30 @@ type Collection implements Node {
 
 **ルール5: 主なビジネスオブジェクトの型は常に`Node`を実装するべきである**
 
-### Rules and Subobjects
+### ルールとサブオブジェクト
 
-We will consider the next two fields in our Collection type together: `rules`,
-and `rulesApplyDisjunctively`. The first is pretty straightforward: a list of
-rules. Do note that both the list itself and the elements of the list are marked
-as non-null: this is fine, as GraphQL does distinguish between `null` and `[]`
-and `[null]`. For manual collections, this list can be empty, but it cannot be
-null nor can it contain a null.
+Collection型の次の2つのフィールド `rules`と`rulesApplyDisjunctively` は一緒にして考えます。前者はルールのリストであり、かなり簡単です。
+リスト自体とリストの要素の両方がnullでないとマークされていることに注意してください。
+GraphQLは`null`と`[]`と`[null]`を区別するため、これは問題ありません。
+マニュアルなコレクションの場合、このリストは空でもかまいませんが、nullにすることも、nullを含めることもできません。
 
-*Protip: List-type fields are almost always non-null lists with non-null
-elements. If you want a nullable list make sure there is real semantic value in
-being able to distinguish between an empty list and a null one.*
+*Protip：リスト型フィールドは、ほとんどの場合、非nullであり、要素も非nullです。nullなリストを必要とする場合は、空のリストとnullのリストを区別できることに意味があることを確認してください。*
 
-The second field is a bit weird: it is a boolean field indicating whether the
-rules apply disjunctively or not. It is also non-null, but here we run into a
-problem: what value should this field take for manual collections? Making it
-either false or true feels misleading, but making the field nullable then makes
-it a kind of weird tri-state flag which is also awkward when dealing with
-automatic collections. While we're puzzling over this, there is one other thing
-that is worth mentioning: these two fields are obviously and intricately related.
-This is true semantically, and it's also hinted by the fact that we chose names
-with a shared prefix. Is there a way to indicate this relationship in the schema
-somehow?
 
-As a matter of fact, we can solve all of these problems in one fell swoop by
-deviating even further from our underlying implementation and introducing a new
-GraphQL type with no direct model equivalent: `CollectionRuleSet`. This is often
-warranted when you have a set of closely-related fields whose values and
-behaviour are linked. By grouping the two fields into their own type at the API
-level we provide a clear semantic indicator and also solve all of our problems
-around nullability: for manual collections, it is the rule-set itself which is
-null. The boolean field can remain non-null. This leads us to the following
-design:
+2番目のフィールドはちょっと変わっていて、ルールが論理的に適用されるかどうかを示すブール値のフィールドです。
+これもnullではありませんが、一つの問題に直面します。マニュアルなコレクションではこのフィールドはどのような値を取るべきですか?
+falseまたはtrueにするのは誤解を招く恐れがありますが、フィールドをnull可能にすると、自動のコレクションを扱うときには奇妙な3状態を表すフラグになります。
+私たちはこれに疑問を呈していますが、伝えておくべきことがもう1つあります。
+これらの2つのフィールドは明らかに複雑に関係しています。
+これは意味的にそうであり、共有なプレフィックスを持つ名前にしたことからも見て取れます。
+何らかの形でこの関係をスキーマに示す方法はあるのでしょうか。
+
+実際には、根本的な実装からさらに逸脱し、直接のモデルには対応しない新しいGraphQL型である`CollectionRuleSet`を導入することで、これらの問題のすべてを解決することができます。
+値と動作がリンクされている密接に関連したフィールドがある場合、これはしばしば正当なものです。
+APIレベルで2つのフィールドを独自のタイプにグループ化することで、明確で意味のある指標を提供し、
+null許容性に関するすべての問題を解決します。
+マニュアルコレクションの場合はルールセットはnullを取ります。
+ブール値フィールドはnull以外のままにできます。以上から次のような設計になります。
 
 ```graphql
 type Collection implements Node {
@@ -341,12 +332,9 @@ type CollectionRule {
 }
 ```
 
-*Protip: Like lists, boolean fields are almost always non-null. If you want a
-nullable boolean, make sure there is real semantic value in being able to
-distinguish between all three states (null/false/true) and that it doesn't
-indicate a bigger design flaw.*
+*Protip: リストと同様、ブール値フィールドはほとんどの場合nullではありません。 null可能なブール値を必要とする場合は、3つの状態（null / false / true）を区別することに、本当に意味的価値があるかどうかを確認し、より大きな設計上の欠陥ではないことを確かめてください*
 
-*Rule #6: Group closely-related fields together into subobjects.*
+*ルール6: 密接に関連するフィールドをサブオブジェクトにグループ化する。*
 
 ### Lists and Pagination
 
