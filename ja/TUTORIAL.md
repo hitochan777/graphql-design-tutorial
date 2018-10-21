@@ -257,32 +257,33 @@ type CollectionRule {
 解決しなければならない全く新しい設計の問題が出てきました。
 フィールドを上から下へと順に見ていきながら修正していきましょう。
 
-### IDs and the `Node` Interface
+### IDと`Node` インターフェース
 
-The very first field in our Collection type is an ID field, which is fine and
-normal; this ID is what we'll need to use to identify our collections throughout
-the API, in particular when performing actions like modifying or deleting them.
-However there is one piece missing from this part of our design: the `Node`
-interface. This is a very commonly-used interface that already exists in most
-schemas and looks like this:
+コレクション型の最初のフィールドはIDフィールドです。いたって普通ですね。
+このIDは、特に変更や削除などの操作を実行する際に、APIを通じてコレクションを識別するのに必要となります。
+しかし、一つ欠落しているものが1つあります。それは`Node` インターフェースです。
+これは、非常に一般的に使用されるインターフェイスで、ほとんどのスキーマには既に存在します。
+次のような構造です。
+
 ```graphql
 interface Node {
   id: ID!
 }
 ```
-It hints to the client that this object is persisted and retrievable by the
-given ID, which allows the client to accurately and efficiently manage local
-caches and other tricks. Most of your major identifiable business objects
-(e.g. products, collections, etc) should implement `Node`.
+クライアントには、このオブジェクトが永続化され、指定されたIDで取得可能であることがわかり、
+クライアントがローカルキャッシュなどの方法を正確かつ効率的に管理できるようになります。
+識別可能な主なビジネスオブジェクト（製品、コレクションなど）のほとんどは、 `Node`を実装するべきです。
 
-The beginning of our design now just looks like:
+
+型の定義は次のように始まります。
 ```graphql
 type Collection implements Node {
   id: ID!
+  ...
 }
 ```
 
-*Rule #5: Major business-object types should always implement `Node`.*
+**ルール5: 主なビジネスオブジェクトの型は常に`Node`を実装するべきである**
 
 ### Rules and Subobjects
 
