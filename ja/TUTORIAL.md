@@ -217,25 +217,24 @@ REST APIでうまくいくものがGraphQLの良い選択であるとは考え�
 
 **ルール3: 実装、ユーザーインターフェース、レガシーAPIではなく、ビジネスドメインを中心としたAPI設計をしてください。**
 
-## Step Three: Adding Detail
+## ステップ3: 詳細を詰める
 
-Now that we have a clean structure to model our types, we can add back our
-fields and start to work at that level of detail again.
 
-Before we start adding detail, ask yourself if it's really needed at this
-time. Just because a database column, model property, or REST attribute may
-exist, doesn't mean it automatically needs to be added to the GraphQL schema.
+型をモデル化するクリーンな構造ができたので、ここまでは省略していたフィールドを戻して、
+詳細なレベルで再びデザインを考えられるようになりました。。
 
-Exposing a schema element (field, argument, type, etc) should be driven by an
-actual need and use case. GraphQL schemas can easily be evolved by adding
-elements, but changing or removing them are breaking changes and much more
-difficult.
+詳細を追加する前に、現時点で本当に必要かどうかを自問してください。
+データベースのカラム、モデルのプロパティ、またはRESTの属性が存在するかもしれないというだけで、
+必ずしもそれらをGraphQLのスキーマに追加する必要はありません。
 
-*Rule #4: It's easier to add fields than to remove them.*
+スキーマ要素（フィールド、引数、型など）を公開するかどうかは実際のニーズとユースケースをもとに考えるべきです。
+GraphQLのスキーマは要素を追加することで簡単に拡張することができますが、スキーマの変更や削除は重大な変更であり、はるかに困難です。
 
-### Starting point
+**ルール4: フィールドは削除するより追加するほうが簡単である**
 
-Restoring our naive fields adjusted for our new structure, we get:
+### 出発点
+
+元々あったフィールドを新しい構造に合わせて、もとに戻すと次のようになります。
 
 ```graphql
 type Collection {
@@ -255,8 +254,8 @@ type CollectionRule {
 }
 ```
 
-Now we have a whole new host of design problems to resolve. We'll work through
-the fields in order top to bottom, fixing things as we go.
+解決しなければならない全く新しい設計の問題が出てきました。
+フィールドを上から下へと順に見ていきながら修正していきましょう。
 
 ### IDs and the `Node` Interface
 
