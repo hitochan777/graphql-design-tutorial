@@ -336,28 +336,29 @@ type CollectionRule {
 
 *ルール6: 密接に関連するフィールドをサブオブジェクトにグループ化する。*
 
-### Lists and Pagination
+### リストとページネーション
 
-Next on the chopping block is our `products` field. This one might seem safe;
-after all we already "fixed" this relation back when we removed our `CollectionMembership`
-type, but in fact there's something else wrong here.
+次に考慮すべき塊は`products`フィールドです。
+`CollectionMembership`型を削除したときに、この関係をすでに「固定」したので、
+このフィールドは特に問題ないと思うかもしれません。
+しかし、実は一つ問題があります。
 
-The field as currently defined returns an array of products, but collections can
-easily have many tens of thousands of products, and trying to gather all of
-those into a single array would be incredibly expensive and inefficient. For
-situations like this, GraphQL provides lists pagination.
+現在のところこのフィールドは製品を要素とする配列を返すように定義されていますが、
+コレクションは何十万もの製品を持っているかもしれません。
+なので、これらの製品すべてを一つの配列に集めるのは非常に高価で非効率です。
+このようなケースを解決するために、GraphQLにはリストのページネーションがあります。
 
-Whenever you implement a field or relation returning multiple objects, always
-ask yourself if the field should be paginated or not. How many of this object
-can there be? What quantity is considered pathological?
+オブジェクトを複数返すフィールドや関係を実装する際には、そのフィールドは何個のオブジェクトを持ちうるか、どの量まで達すると病的かなど、
+常にそのフィールドをページネーションにするべきか自問してください。
 
+フィールドをページネーションにするということは、ページネーションをまず実装する必要があるということです。
+このチュートリアルでは、[Connections](https://graphql.org/learn/pagination/#complete-connection-model)
 Paginating a field means you need to implement a pagination solution first.
-This tutorial uses [Connections](https://graphql.org/learn/pagination/#complete-connection-model)
-which is defined by the [Relay Connection spec](https://facebook.github.io/relay/graphql/connections.htm).
+This tutorial uses [Relay Connection spec](https://facebook.github.io/relay/graphql/connections.htm)で定義されている[Connections](https://graphql.org/learn/pagination/#complete-connection-model)を使います。
 
-In this case, paginating the products field in our design is as simple as
-changing its definition to `products: ProductConnection!`. Assuming you have
-connections implemented, your types would look like this:
+この場合、製品フィールドをページネーションにするには、フィールドの定義を`products: ProductConnection!`にするだけで済みます。
+changing its definition to `products: ProductConnection!`. 
+connectionsが実装済みであると仮定すると、型は次のようになるでしょう。
 
 ```graphql
 type ProductConnection {
@@ -375,11 +376,9 @@ type PageInfo {
   hasPreviousPage: Boolean!
 }
 ```
+*ルール7: フィールドをページネーションにするべきか常に確認してください。*
 
-
-*Rule #7: Always check whether list fields should be paginated or not.*
-
-###  Strings
+### Strings
 
 Next up is the `title` field. This one is legitimately fine the way it is. It's
 a simple string, and it's marked non-null because all collections must have a
