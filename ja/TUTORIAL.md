@@ -457,19 +457,12 @@ GraphQLにはビルトインのスカラー型（`String`、`Int`、`Boolean`な
 
 ### 列挙型
 
-This brings us to the final type in our schema, `CollectionRule`. Each rule
-consists of a column to match on (e.g. product title), a type of relation (e.g.
-equality) and an actual value to use (e.g. "Boots") which is confusingly called
-`condition`. That last field can be renamed, and so should `column`; column is
-very database-specific terminology, and we're working in GraphQL. `field` is
-probably a better choice.
+スキーマの最後の型は、`CollectionRule`です。各ルールは、ルールの対象列（例: 商品タイトル）、リレーションのタイプ（例: 等価）、
+使用する実際の値（例:「ブーツ」）で構成されます。値は`condition`という分かりにくい名前になっているので、名前は変更してもいいかもしれません。
+カラムはデータベース特有の用語で、GraphQL上ではおそらく `field` のほうが良いでしょう
 
-スキーマの最後の型は、`CollectionRule`です。各ルールは、ルールの対象列（例：商品タイトル）、関係のタイプ（たとえば等価）、使用する実際の価値（「ブーツ」など）で構成され、「条件」と混同されます。最後のフィールドの名前を変更することができます。カラムはデータベース特有の用語で、GraphQLで作業しています。おそらく `フィールド`が良い選択です。
-
-As far as types go, both `field` and `relation` are probably implemented
-internally as enumerations (assuming your language of choice even has
-enumerations). Fortunately GraphQL has enums as well, so we can convert those
-two fields to enums. Our completed schema design now looks like this:
+型に関してですが、`field`と` relation`ははおそらくどちらも内部的に列挙型として実装されています（使用している言語が列挙型をサポートしていると仮定します）。
+幸いなことにGraphQLにも列挙型があるので、これら2つのフィールドを列挙型に変換できます。完成したスキーマは次のようになります。
 
 ```graphql
 type Collection implements Node {
