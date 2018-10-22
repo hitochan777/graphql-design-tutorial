@@ -33,7 +33,7 @@ APIで公開したいと考えています。
 
 バックエンドでは、次のように新しい機能が実装されています。
 - すべてのコレクションは、タイトル、説明文 (HTMLフォーマットを含む)、画像のような幾つかのシンプルな属性を持っています。
-- 2種類のコレクションがあります。コレクションに含まれる製品をリストアップする「マニュアル」コレクションと、ルールに従って商品をリストアップする「自動」コレクションです。
+- 2種類のコレクションがあります。コレクションに含まれる商品をリストアップする「マニュアル」コレクションと、ルールに従って商品をリストアップする「自動」コレクションです。
 - 商品とコレクションの関係は多対多であるため、`CollectionMembership`というジョインテーブルを真ん中に持たせます。
 - コレクションは、これまでの商品と同様に、公開されている（店頭に表示されている）か、公開されていないかのどちらかです。
 
@@ -136,13 +136,13 @@ type CollectionMembership {
 ### `CollectionMembership` を表現する
 
 すでに目立っていて、かなりはっきりしている問題は、`CollectionMembership` 型がスキーマに含まれていることです。
-コレクションの所属関係を表すテーブルは製品とコレクションの多対多の関係を表すために使用されます。
-最後の文をもう一度読んでください。このテーブルが表すのは**製品とコレクションの間の関係**です。
+コレクションの所属関係を表すテーブルは商品とコレクションの多対多の関係を表すために使用されます。
+最後の文をもう一度読んでください。このテーブルが表すのは**商品とコレクションの間の関係**です。
 セマンティック、ビジネスドメインの観点からみれば、コレクションの所属関係は
 何とも関係ない実装の詳細です。
 
 これは、このテーブルがAPIに属していないことを意味します。
-代わりに、APIでは製品と実際のビジネスドメインの関係を直接公開するべきです。
+代わりに、APIでは商品と実際のビジネスドメインの関係を直接公開するべきです。
 コレクションの所属関係をスキーマから取り除くと、ハイレベルなデザインは次のようになります。
 
 ```graphql
@@ -177,8 +177,8 @@ type AutomaticCollectionRule { }
 これは直観的にはかなり理にかなっています。２つの型は共通のフィールドがたくさんありますが、2つの関係（`AutomaticCollections`はルールを持つ）や挙動を見ると依然として異なっていることがわかります。
 
 しかし、ビジネスモデルの観点から見ると、これらの違いは基本的に実装の詳細です。
-コレクションの挙動の定義は、製品をグループ化することであり、製品を選択する方法は補足的なものです。
-ある時点で実装を拡張して3つ目の製品選択の方法（機械学習とか?）や選択方法の混ぜ合わせる（ルールや手動で追加された製品）などを許可するようにするかもしれませんが、**それらも依然としてコレクションである**ということが重要です。
+コレクションの挙動の定義は、商品をグループ化することであり、商品を選択する方法は補足的なものです。
+ある時点で実装を拡張して3つ目の商品選択の方法（機械学習とか?）や選択方法の混ぜ合わせる（ルールや手動で追加された商品）などを許可するようにするかもしれませんが、**それらも依然としてコレクションである**ということが重要です。
 もし仮に今すぐ選択方法をミックスできないのであれば、実装の失敗であると主張することさえできます。
 要するにAPIの形は実際には次のようにすべきです。
 
@@ -272,7 +272,7 @@ interface Node {
 ```
 クライアントには、このオブジェクトが永続化され、指定されたIDで取得可能であることがわかり、
 クライアントがローカルキャッシュなどの方法を正確かつ効率的に管理できるようになります。
-識別可能な主なビジネスオブジェクト（製品、コレクションなど）のほとんどは、 `Node`を実装するべきです。
+識別可能な主なビジネスオブジェクト（商品、コレクションなど）のほとんどは、 `Node`を実装するべきです。
 
 
 型の定義は次のように始まります。
@@ -343,9 +343,9 @@ type CollectionRule {
 このフィールドは特に問題ないと思うかもしれません。
 しかし、実は一つ問題があります。
 
-現在のところこのフィールドは製品を要素とする配列を返すように定義されていますが、
-コレクションは何十万もの製品を持っているかもしれません。
-なので、これらの製品すべてを一つの配列に集めるのは非常に高価で非効率です。
+現在のところこのフィールドは商品を要素とする配列を返すように定義されていますが、
+コレクションは何十万もの商品を持っているかもしれません。
+なので、これらの商品すべてを一つの配列に集めるのは非常に高価で非効率です。
 このようなケースを解決するために、GraphQLにはリストのページネーションがあります。
 
 オブジェクトを複数返すフィールドや関係を実装する際には、そのフィールドは何個のオブジェクトを持ちうるか、どの量まで達すると病的かなど、
@@ -354,7 +354,7 @@ type CollectionRule {
 フィールドをページネーションにするということは、ページネーションをまず実装する必要があるということです。
 このチュートリアルでは、[Relay Connection spec](https://facebook.github.io/relay/graphql/connections.htm)で定義されている[Connections](https://graphql.org/learn/pagination/#complete-connection-model)を使います。
 
-この場合、製品フィールドをページネーションにするには、フィールドの定義を`products: ProductConnection!`にするだけで済みます。
+この場合、商品フィールドをページネーションにするには、フィールドの定義を`products: ProductConnection!`にするだけで済みます。
 connectionsが実装済みであると仮定すると、型は次のようになるでしょう。
 
 ```graphql
@@ -446,18 +446,16 @@ GraphQLにはビルトインのスカラー型（`String`、`Int`、`Boolean`な
 
 *ルール10: 意味的に価値を持つものを公開するときに、カスタムスカラー型を使用してください。*
 
-### Pagination Again
+### 再びページネーション
 
-That covers all of the fields in our core `Collection` type. The next object is
-`CollectionRuleSet`, which is quite simple. The only question here is whether or
-not the list of rules should be paginated. In this case the existing array
-actually makes sense; paginating the list of rules would be overkill. Most
-collections will only have a handful of rules, and there isn't a good use case
-for a collection to have a large rule set. Even a dozen rules is probably an
-indicator that you need to rethink that collection, or should just be manually
-adding products.
+これで`Collection`型の主要なフィールドは全て見ました。次のオブジェクトは`CollectionRuleSet`です。これはかなり簡単です。
+ここでの唯一の質問は、ルールのリストをページネーションするかどうかですが、リストを配列にするのは理にかなっています。
+というんも、ルールのリストをページネーションするのはやり過ぎだからです。
+コレクションは、限られた数のルールしかありません場合がほとんどですし、
+コレクションが大きなルールセットを持つのはよいユースケースとは言えません。
+おそらくルールが十数もあれば、コレクションを再考するか、商品を一つずつリストアップするほうが良いことを示唆しているのかもしれません
 
-### Enums
+### 列挙型
 
 This brings us to the final type in our schema, `CollectionRule`. Each rule
 consists of a column to match on (e.g. product title), a type of relation (e.g.
@@ -465,6 +463,8 @@ equality) and an actual value to use (e.g. "Boots") which is confusingly called
 `condition`. That last field can be renamed, and so should `column`; column is
 very database-specific terminology, and we're working in GraphQL. `field` is
 probably a better choice.
+
+スキーマの最後の型は、`CollectionRule`です。各ルールは、ルールの対象列（例：商品タイトル）、関係のタイプ（たとえば等価）、使用する実際の価値（「ブーツ」など）で構成され、「条件」と混同されます。最後のフィールドの名前を変更することができます。カラムはデータベース特有の用語で、GraphQLで作業しています。おそらく `フィールド`が良い選択です。
 
 As far as types go, both `field` and `relation` are probably implemented
 internally as enumerations (assuming your language of choice even has
