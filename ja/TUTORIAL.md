@@ -421,39 +421,30 @@ type CollectionRule {
 
 *ルール8: IDフィールドの代わりに常にオブジェクト参照を使ってください*
 
-### Naming and Scalars
+### ネーミングとスカラー
 
-The last field in our simple `Collection` type is `bodyHtml`. To a user who is
-unfamiliar with the way that collections were implemented, it's not entirely
-obvious what this field is for; it's the body description of the specific
-collection. The first thing we can do to make this API better is just to rename
-it to `description`, which is a much clearer name.
+単純な`Collection`型の最後のフィールドは`bodyHtml`です。
+コレクションの実装方法になじみのないユーザーには、このフィールドの目的は全くはっきりしませんが、
+特定のコレクションの内容説明のためのフィールドです。
+このAPIを改善するために、まず名前を`description`に変更すべきです。これではるかにわかりやすいな名前になりました。
 
-*Rule #9: Choose field names based on what makes sense, not based on the
-implementation or what the field is called in legacy APIs.*
+*ルール9: 実装やレガシーAPIでの名前に頼らずに、わかりやすい名前を選んでください。*
 
-Next, we can make it non-nullable. As we talked about with the title field, it
-doesn't make sense to distinguish between the field being null and simply being
-an empty string, so we don't expose that in the API. Even if your database
-schema does allow records to have a null value for this column, we can hide that
-at the implementation layer.
+次に、`description`フィールドnull不可能にします。`title`フィールドのときに説明したように、
+このフィールドがnullであることと単に空の文字列であることを区別することには意味がありません。
+なので、APIでそのフィールドをnull可能として公開しないでください。
+データベーススキーマでレコードがこの列のnull値を持つようにしたとしても、実装レイヤーで対応できます。
 
-Finally, we need to consider if `String` is actually the right type for this
-field. GraphQL provides a decent set of built-in scalar types (`String`, `Int`,
-`Boolean`, etc) but it also lets you define your own, and this is a prime use
-case for that feature. Most schemas define their own set of additional scalars
-depending on their use cases. These provide additional context and semantic
-value for clients. In this case, it probably makes sense to define a custom
-`HTML` scalar for use here (and potentially elsewhere) when the string in
-question must be valid HTML.
+最後に、`String`が本当にこのフィールドの適切な型であるかどうかを考えましょう。
+GraphQLにはビルトインのスカラー型（`String`、`Int`、`Boolean`など）がありますが、独自のスカラー型を定義することもできます。
+これはその機能の主要な使用例です。ユースケースに応じて独自のスカラーセットを追加で定義しているスキーマも少なくありません。
+独自のスカラー型はクライアントに追加のコンテキストと意味的価値を提供します。
+今回のケースでは、文字列が有効なHTMLでなければならないのでカスタムの`HTML`スカラーを定義する価値はおそらくあるでしょう。(もしかしたら別の場所でも使えるかもしれません）
 
-Whenever you're adding a scalar field, it's worth checking your existing list of
-custom scalars to see if one of them would be a better fit. If you're adding a
-field and you think a new custom scalar would be appropriate, it's worth talking
-it over with your team to make sure you're capturing the right concept.
+スカラーフィールドを追加するときは、既存のカスタムスカラフィールドの一覧により適したものがあるかを調べたほうがいいです。
+フィールドを追加する際に新しいカスタムスカラーが適切だと思うなら、適切なコンセプトを捉えているかどうかをチームメンバーと話し合ったほうがいいです。
 
-*Rule #10: Use custom scalar types when you're exposing something with specific
-semantic value.*
+*ルール10: 意味的に価値を持つものを公開するときに、カスタムスカラー型を使用してください。*
 
 ### Pagination Again
 
