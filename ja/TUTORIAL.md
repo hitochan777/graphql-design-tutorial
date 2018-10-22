@@ -355,7 +355,6 @@ type CollectionRule {
 このチュートリアルでは、[Relay Connection spec](https://facebook.github.io/relay/graphql/connections.htm)で定義されている[Connections](https://graphql.org/learn/pagination/#complete-connection-model)を使います。
 
 この場合、製品フィールドをページネーションにするには、フィールドの定義を`products: ProductConnection!`にするだけで済みます。
-changing its definition to `products: ProductConnection!`. 
 connectionsが実装済みであると仮定すると、型は次のようになるでしょう。
 
 ```graphql
