@@ -377,16 +377,12 @@ type PageInfo {
 
 ### Strings
 
-Next up is the `title` field. This one is legitimately fine the way it is. It's
-a simple string, and it's marked non-null because all collections must have a
-title.
+次は `title`フィールドです。これは見ればわかる通り問題ないです。
+単純な文字列であり、すべてのコレクションにはタイトルが必要なので非nullとなっています。
 
-*Protip: As with booleans and lists, it's worth noting that GraphQL does
-distinguish between empty strings (`""`) and nulls (`null`), so if you need a
-nullable string make sure there is a legitimate semantic difference between
-not-present (`null`) and present-but-empty (`""`). You can often think of empty
-strings as meaning "applicable, but not populated", and null strings meaning
-"not applicable".*
+*Protip: ブール値やリストと同様に、GraphQLは空文字列（`""`）とnull（`null`）を区別するので注意しましょう。
+なので、null可能な文字列が必要な場合は、 「存在しない」 (`null`）と「存在するが空」（``)との間にちゃんとした意味の違いがあることを確認してください。
+空文字列は、「適用可能だが値が入ってない」とみなし、空の文字列は「適用外」を意味すると考えられるケースは多々あると思います。*
 
 ### IDs and Relations
 
