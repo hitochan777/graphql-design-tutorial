@@ -352,9 +352,7 @@ type CollectionRule {
 常にそのフィールドをページネーションにするべきか自問してください。
 
 フィールドをページネーションにするということは、ページネーションをまず実装する必要があるということです。
-このチュートリアルでは、[Connections](https://graphql.org/learn/pagination/#complete-connection-model)
-Paginating a field means you need to implement a pagination solution first.
-This tutorial uses [Relay Connection spec](https://facebook.github.io/relay/graphql/connections.htm)で定義されている[Connections](https://graphql.org/learn/pagination/#complete-connection-model)を使います。
+このチュートリアルでは、[Relay Connection spec](https://facebook.github.io/relay/graphql/connections.htm)で定義されている[Connections](https://graphql.org/learn/pagination/#complete-connection-model)を使います。
 
 この場合、製品フィールドをページネーションにするには、フィールドの定義を`products: ProductConnection!`にするだけで済みます。
 changing its definition to `products: ProductConnection!`. 
