@@ -508,14 +508,13 @@ enum CollectionRuleRelation {
 
 *ルール11: フィールドが特定の集合の値のどれかを取る場合のみ、列挙型を使ってください*
 
-## Step Four: Business Logic
+## ステップ4: ビジネスロジック
 
-We now have a minimal but well-designed GraphQL API for collections. There is a
-lot of detail to collections that we haven't dealt with - any real
-implementation of this feature would need a lot more fields to deal with things
-like product sort order, publishing, etc. - but as a rule those fields will all
-follow the same design patterns layed out here. However, there are still a few
-things which bear looking at in more detail.
+コレクション用のGraphQL APIが最小限ですが、うまく設計できました。
+ただ、今回設計したコレクションには対応できていない詳細ははたくさんあります。
+詳細に実装するには、商品のソート順やパブリッシュなどの処理にもっと多くのフィールドが必要ですが、
+原則としてそれらのフィールドはすべてこのチュートリアルで説明したデザインパターンに従ってください。
+しかし、もう少し踏み込んで見ていきましょう。
 
 For this section, it is most convenient to start with a motivating use case from
 the hypothetical client of our API. Let us therefore imagine that the client
