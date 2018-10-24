@@ -516,57 +516,45 @@ enum CollectionRuleRelation {
 原則としてそれらのフィールドはすべてこのチュートリアルで説明したデザインパターンに従ってください。
 しかし、もう少し踏み込んで見ていきましょう。
 
-For this section, it is most convenient to start with a motivating use case from
-the hypothetical client of our API. Let us therefore imagine that the client
-developer we have been working with needs to know something very specific:
-whether a given product is a member of a collection or not. Of course this is
-something that the client can already answer with our existing API: we expose
-the complete set of products in a collection, so the client simply has to
-iterate through looking for the product they care about.
+このセクションでは、説明をわかりやすくするために、APIのあるクライアントを仮定したユースケースから初めましょう。
+なので、一緒に仕事をしているクライアント開発者は、特定の製品がコレクションのメンバーであるかどうか、という非常に具体的なことを
+知る必要があるとしましょう。
+もちろんこれは、今のAPIで実現可能なことです。
+コレクション内で完全な一連の製品が公開されているため、クライアントは気になる製品を探すだけで済みます。
 
-This solution has two problems though. The first, obvious problem is that it's
-inefficient; collections can contain millions of products, and having the client
-fetch and iterate through them all would be extremely slow. The second, bigger
-problem, is that it requires the client to write code. This last point is a
-critical piece of design philosophy: the server should always be the single
-source of truth for any business logic. An API almost always exists to serve
-more than one client, and if each of those clients has to implement the same
-logic then you've effectively got code duplication, with all the extra work and
-room for error which that entails.
+この解決方法には2つの問題があります。
+１つ目の問題ははっきりしていて、非効率的であることです。
+コレクションには何百万もの製品が含まれている可能性があり、クライアントが製品のリストをフェッチしてループするとなると、処理が非常に遅くなります。 
+2つ目の問題は1つ目よりも深刻な問題で、クライアント側でコードを書く必要があることです。
+この最後のポイントは、設計理念で重要な部分です。サーバーは、常にビジネスロジックのただ一つの真実の源であるべきです。
+APIは複数のクライアントにサービスを提供することがほとんどですが、それぞれのクライアントが同じロジックを実装する必要があるのであれば、コードの重複が発生し余分な作業とエラーが発生します。
 
-*Rule #12: The API should provide business logic, not just data. Complex
-calculations should be done on the server, in one place, not on the client, in
-many places.*
+*ルール12: APIはデータだけではなくビジネスロジックも提供すべきです。複雑な処理は複数のクライアントでは行わず、サーバー側で行うようにすべきです。*
 
-Back to our client use-case, the best answer here is to provide a new field
-specifically dedicated to solving this problem. Practically, this looks like:
+クライアントのユースケースに話を戻しますが、ここでの最も良い方法はこの問題を解決することに特化した新しいフィールドを提供することです。
+実際には次のようになります。
+
 ```graphql
 type Collection implements Node {
   # ...
   hasProduct(id: ID!): Bool!
 }
 ```
-This field takes the ID of a product and returns a boolean based on the server
-determining if a product is in the collection or not. The fact that this sort-of
-duplicates the data from the existing `products` field is irrelevant. GraphQL
-returns only what clients explicitly ask for, so unlike REST it does not cost us
-anything to add a bunch of secondary fields. The client doesn't have to write
-any code beyond querying an additional field, and the total bandwidth used is a
-single ID plus a single boolean.
+このフィールドは、商品のIDを取得し、商品がコレクションに含まれているかどうかをサーバーが判断してブール値を返します。
+このフィールドが、既存の`products`フィールドと被っているいうというのは関係ありません。
+GraphQLは明示的にクライアントが要求するものだけを返すので、RESTとは異なり、余分なフィールドを追加することはありません。
+クライアントは追加のフィールドに対してクエリを投げる以外にコードを書く必要はなく、消費される合計帯域幅はIDとブール値だけです。
 
-One follow-up warning though: just because we're providing business logic in a
-situation does not mean we don't have to provide the raw data too. Clients
-should be able to do the business logic themselves, if they have to. You can’t
-predict all of the logic a client is going to want, and there isn't always an
-easy channel for clients to ask for additional fields (though you should strive
-to ensure such a channel exists as much as possible).
+ただし、補足しておきますが、ビジネスロジックを提供しているからといって、生データを提供する必要はがないわけではありません。
+クライアントも必要であればビジネスロジックの実装をを自分で行うことができなければなりません。
+クライアントが必要とするすべてのロジックを予測することはできません。
+また、クライアントが追加のフィールドを簡単に要求できる方法は必ずしもありません。（ただ、できるだけこのような方法を提供できるようする必要はありますが）。
 
-*Rule #13: Provide the raw data too, even when there's business logic around it.*
+*ルール13: ビジネスロジックがあったとしても、生データも提供してください。*
 
-Finally, don't let business-logic fields affect the overall shape of the API.
-The business domain data is still the core model. If you're finding the business
-logic doesn't really fit, then that's a sign that maybe your underlying model
-isn't right.
+最後に、API全体の形がビジネスロジックのフィールドに影響されることはないようにしてください。
+ビジネスドメインのデータはコアとなるモデルにはあります。ビジネスロジックが現状の設計に合わないのであれば、
+それはベースとなるモデルが間違っていることを示唆しているのかもしれません。
 
 ## Step Five: Mutations
 
