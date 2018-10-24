@@ -92,7 +92,7 @@ type CollectionMembership {
 まず、特定のフィールドやmutationのことは考えるのではなく、
 型とその関係だけに焦点を当て、よりハイレベルの視点から始めてください。
 基本的にGraphQL固有の要素を持った、Entity-Relationshipモデルを想像してください。
-ナイーブなスキーマを縮小すると次のようになります。
+ナイーブなスキーマを簡略化すると次のようになります。
 
 ```graphql
 interface Collection {
