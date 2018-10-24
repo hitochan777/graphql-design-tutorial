@@ -276,6 +276,7 @@ interface Node {
 
 
 型の定義は次のように始まります。
+
 ```graphql
 type Collection implements Node {
   id: ID!
