@@ -582,8 +582,9 @@ GraphQLのスキーマ設計で最後に残っているのは実際に値を変�
 
 *ルール14: リソースにおいて、別のロジカルなアクションには別のミューテーションを書いてください*
 
-### Manipulating Relationships
+### リレーションの操作
 
+`update`ミューテーションはまだ多くの責務を持ちすぎているので、
 The `update` mutation still has far too many responsibilities so it makes sense
 to continue splitting it up, but we will deal with these actions separately
 since they're worth thinking about from another dimension as well: the
@@ -592,18 +593,10 @@ already considered the use of IDs vs embedding, and the use of pagination vs
 arrays in the read API, and there are some similar issues to deal with when
 mutating these relationships.
 
-For the relationship between products and collections, there are a couple of
-styles we could broadly consider:
-- Embedding the entire relationship (e.g. `products: [ProductInput!]!`) into the
-  update mutation is the CRUD-style default, but of course it quickly becomes
-  inefficient when the list is large.
-- Embedding "delta" fields (e.g. `productsToAdd: [ID!]!` and
-  `productsToRemove: [ID!]!`) into the update mutation is more efficient since
-  only the changed IDs need to be specified instead of the entire list, but it
-  still keeps the actions tied together.
-- Splitting it up entirely into separate mutations (`addProduct`,
-  `removeProduct`, etc.) is the most powerful and flexible but also the most
-  work.
+商品とコレクションの関係については、広く考慮できるスタイルが幾つかあります。
+- 更新のミューテーションにリレーション全体 (例: `products: [ProductInput!]!`)を埋め込むのはCRUD形式のデフォルトですが、当然ながらリストが大きければすぐに効率は悪くなります。
+- 更新のミューテーションに"差分"のフィールド (例: `productsToAdd: [ID!]!`)を埋め込むと、リスト全体ではなく変更があるIDのみを明記すればよいので、より効率的になります。ただ、アクションは密接に結びついたままです。
+- 別のミューテーション(`addProduct`, `removeProduct`など)に完全に切り分けるの方法が、一番強力かつ柔軟であるだけではなく、一番うまく行きます。
 
 The last option is generally the safest call, especially since mutations like
 this will usually be distinct logical actions anyway. However, there are a lot
@@ -628,11 +621,10 @@ of factors to consider:
   would require rules to be individually identifiable and that feels like
   overkill.
 
-*Rule #15: Mutating relationships is really complicated and not easily
- summarized into a snappy rule.*
+*ルール15: リレーションのミューテーションは本当に複雑なのでキレイなルールにまとめるのは簡単ではないです*
 
- If you stir all of this together, for collections we end up with the following
- list of mutations:
+これら全てを集めると、コレクションに関しては次のようなミューテーションのリストが出来上がります。
+
 - create
 - delete
 - update
