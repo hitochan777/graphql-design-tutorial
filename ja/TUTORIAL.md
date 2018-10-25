@@ -557,35 +557,30 @@ GraphQLは明示的にクライアントが要求するものだけを返すの�
 ビジネスドメインのデータはコアとなるモデルにはあります。ビジネスロジックが現状の設計に合わないのであれば、
 それはベースとなるモデルが間違っていることを示唆しているのかもしれません。
 
-## Step Five: Mutations
+## ステップ5: ミューテーション
 
-The final missing piece of our GraphQL schema design is the ability to actually
-change values: creating, updating, and deleting collections and related pieces.
-As with the readable portion of the schema we should start with a high-level
-view: in this case, of just the various mutations we will want to implement,
-without worrying about their specific inputs or outputs. Naively we might follow
-the CRUD paradigm and have just `create`, `delete`, and `update` mutations.
-While this is a decent starting place, it is insufficient for a proper GraphQL
-API.
+GraphQLのスキーマ設計で最後に残っているのは実際に値を変える機能、つまりは、コレクションや関連するオブジェクトの作成、更新、削除です。
+わかりやすい部分から始めるために、今回のケースでは、特定の入出力は気にせず実装したいと思う色々ミューテーションをハイレベルな視点から実装し始めるべきです。
+愚直に行くのであれば、CRUDのパラダイムに従って`create`、`delete`、`update`というミューテーションだけを持たせるかもしれません。
+それなりに良いスタート地点ではあるのですが、適切なGraphQL APIというには不十分です。
 
-### Separate Logical Actions
+### ロジカルなアクションの分離
 
-The first thing we might notice if we were to stick to just CRUD is that our
-`update` mutation quickly becomes massive, responsible not just for updating
-simple scalar values like title but also for performing complex actions like
-publishing/unpublishing, adding/removing/reordering the products in the
-collection, changing the rules for automatic collections, etc. This makes it
-hard to implement on the server and hard to reason about for the client.
-Instead, we can take advantage of GraphQL to split it apart into more granular,
-logical actions. As a very first pass, we can split out publish/unpublish
-resulting in the following mutation list:
+単純にCRUDにこだわれば`update`ミューテーションがすぐに肥大化し,、
+タイトルのような単純なスカラー値を更新するだけではなく、
+コレクション内の商品の公開・非公開、追加・削除・順序替え、自動コレクションのルールの変更などのような
+複雑なアクションを行う責務までをも持ってしまうことはすぐに気づくでしょう。
+これはサーバー上での実装とクライアント側でのAPIの使い方を難しくしてしまいます。
+代わりに、GraphQLをうまく利用して一つの大きなミューテーションをより細かい、ロジカルなアクションに分けることができます。
+最初にできることとして、`update`に含まれた公開・非公開を切り出すことで、ミューテーションの一覧は次のようになります。
+
 - create
 - delete
 - update
 - publish
 - unpublish
 
-*Rule #14: Write separate mutations for separate logical actions on a resource.*
+*ルール14: リソースにおいて、別のロジカルなアクションには別のミューテーションを書いてください*
 
 ### Manipulating Relationships
 
