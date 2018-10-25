@@ -584,42 +584,32 @@ GraphQLのスキーマ設計で最後に残っているのは実際に値を変�
 
 ### リレーションの操作
 
-`update`ミューテーションはまだ多くの責務を持ちすぎているので、
-The `update` mutation still has far too many responsibilities so it makes sense
-to continue splitting it up, but we will deal with these actions separately
-since they're worth thinking about from another dimension as well: the
-manipulation of object relationships (e.g. one-to-many, many-to-many). We've
-already considered the use of IDs vs embedding, and the use of pagination vs
-arrays in the read API, and there are some similar issues to deal with when
-mutating these relationships.
+`update`ミューテーションはまだ多くの責務を持ちすぎているので、引き続き別のアクションに切り出したほうがいいです。
+ただ、これから切り出すアクションは、別の視点から考えてみる価値があります。[^2]
+[^2]: 結構異訳しました。
+別の視点というのは、オブジェクトのリレーション(例: 一対多、多対多)を操作するという視点です。
+これまですでに読み込み用のAPIで、「ID」対「 オブジェクト埋め込み」、「ページネーションの使用」対「配列」を考えてきましたが、
+これらのリレーションをミューテーションする際にも読み込み用のAPIの時と似たような問題があります。
 
 商品とコレクションの関係については、広く考慮できるスタイルが幾つかあります。
 - 更新のミューテーションにリレーション全体 (例: `products: [ProductInput!]!`)を埋め込むのはCRUD形式のデフォルトですが、当然ながらリストが大きければすぐに効率は悪くなります。
 - 更新のミューテーションに"差分"のフィールド (例: `productsToAdd: [ID!]!`)を埋め込むと、リスト全体ではなく変更があるIDのみを明記すればよいので、より効率的になります。ただ、アクションは密接に結びついたままです。
 - 別のミューテーション(`addProduct`, `removeProduct`など)に完全に切り分けるの方法が、一番強力かつ柔軟であるだけではなく、一番うまく行きます。
 
-The last option is generally the safest call, especially since mutations like
-this will usually be distinct logical actions anyway. However, there are a lot
-of factors to consider:
-- Is the relationship large or paginated? If so, embedding the entire list is
-  definitely impractical, however either delta fields or separate mutations
-  could still work. If the relationship is always small though (especially if
-  it's one-to-one), embedding may be the simplest choice.
-- Is the relationship ordered? The product-collection relationship is ordered,
-  and permits manual reordering. Order is naturally supported by the embedded
-  list or by separate mutations (you can add a `reorderProducts` mutation)
-  but isn't an option for delta fields.
-- Is the relationship mandatory? Products and collections can both exist on
-  their own outside of the relationship, with their own create/delete lifecycle.
-  If the relationship were mandatory (i.e. products must be in a collection)
-  then this would strongly suggest separate mutations because the action would
-  actually be to *create* a product, not just to update the relationship.
-- Do both sides have IDs? The collection-rule relationship is mandatory (rules
-  can't exist without collections) but rules don't even have IDs; they are
-  clearly subservient to their collection, and since the relationship is also
-  small, embedding the list is actually not a bad choice here. Anything else
-  would require rules to be individually identifiable and that feels like
-  overkill.
+最後の選択肢が一般的に最も安全です。結局このようなミューテーションがたいてい明確なロジカルアクションになることが大きな理由です。
+ただ、考慮すべき要素がたくさんあります。
+- リレーション先は大きくてページネーションされているか。もしそうなら、リスト全体を埋め込むのは実用的でないです。
+  ただ、差分フィールドや別のミューテーションを設ければ大丈夫かもしれません。
+  リレーション先が常に小さいのであれば (特に一対一であれば)、埋め込みが一番シンプルな選択かもしれません。
+- リレーションはオーダリングされているか。もし商品とコレクションのリレーションがオーダリングされており、マニュアルのオーダリングも許可されています。
+  オーダリングは埋め込まれたリストや別のミューテーション (`reorderProducts`ミューテーションを追加すれば良いです) を使えば自然に提供できますが、差分フィールドでは無理です。
+- リレーションは必須か。商品とコレクションはどちらも作成・削除のライフサイクルをもっており、リレーションとは関係なく独立して存在することができます。
+  もしリレーションが必須であれば (例: 商品はコレクションに必ず含まれなければならない)、アクションはリレーションを更新するだけではなく、
+  実際に商品を*作成*するため別のミューテーションに分けるのを強く勧めます。
+- どちらもIDを持っているか。コレクションとルールの関係は必須ですが (ルールはコレクションなしでは存在しえません)、
+  ルールはIDを持っていません。ルールがコレクションの配下にあることは明らかです。
+  このケースでは、リレーションが小さいのでリストを埋め込むのは悪い選択ではありません。
+  他の方法を取るのであれば個々のルールが特定可能でなければならず、それはやり過ぎな感じがします。
 
 *ルール15: リレーションのミューテーションは本当に複雑なのでキレイなルールにまとめるのは簡単ではないです*
 
@@ -634,17 +624,14 @@ of factors to consider:
 - removeProducts
 - reorderProducts
 
-Products we split into their own mutations, because the relationship is large,
-and ordered. Rules we left inline because the relationship is small, and rules
-are sufficiently minor to not have IDs.
+商品に関しては別のミューテーションにしました。リレーションが大きくて、オーダリングされているからです。
+それに対してルールはインラインのままです。リレーションは小さく、IDを持つほど大したものではないからです。
 
-Finally, you may note that we have mutations like `addProducts` and not
-`addProduct`. This is simply a convenience for the client, since the common use
-case when manipulating this relationship will be to add, remove, or reorder more
-than one product at a time.
+最後に1つ、`addProduct`ではなく`addProducts`のようなミューテーションになっていることに気づいた方もいるかもしれません。
+これはこうした方が単純にクライアント側で便利だからです。
+なぜなら、リレーションを操作する際に、一度に複数の商品を追加、削除、順序替えをするケースが多いからです。
 
-*Rule #16: When writing separate mutations for relationships, consider whether
- it would be useful for the mutations to operate on multiple elements at once.*
+*ルール16: リレーションに対して別のミューテーションを記述する際は、一度に複数の要素を操作できたほうが便利かを考慮してください。*
 
 ### Input: Structure, Part 1
 
