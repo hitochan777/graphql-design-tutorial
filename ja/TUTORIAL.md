@@ -634,30 +634,26 @@ GraphQLのスキーマ設計で最後に残っているのは実際に値を変�
 
 *ルール16: リレーションに対して別のミューテーションを記述する際は、一度に複数の要素を操作できたほうが便利かを考慮してください。*
 
-### Input: Structure, Part 1
+### 入力: 構造 パート1
 
-Now that we know which mutations we want to write, we get to figure out what
-their input structures look like. If you've been browsing any of the real
-production schemas that are publicly available, you may have noticed that many
-mutations define a single global `Input` type to hold all of their arguments:
-this pattern was a requirement of some legacy clients but is no longer needed
-for new code; we can ignore it.
+記述したいミューテーションを洗い出せたので、入力の構造をどういった形にするかを考えてきましょう。
+公開されている実際のプロダクションのスキーマのどれを見ても、多くのミューテーションが単一のグローバルな`Input`型を定義してミューテーションの全ての引数を持たせているのに気づくかもしれません。このパターンはレガシーなクライアントで見られる要件ですが、新しいコードにはこのパターンは必要ありませんので、無視して構いません。
 
-For many simple mutations, an ID or a handful of IDs are all that is needed,
-making this step quite simple. Among collections, we can quickly knock out the
-following mutation arguments:
-- `delete`, `publish` and `unpublish` all simply need a single collection ID
-- `addProducts` and `removeProducts` both need the collection ID as well as a
-  list of product IDs
-This leaves us with only three remaining "complicated" inputs to design:
+単純なミューテーションの多くは、単一のIDか幾つかのIDだけが必要なものですので、このステップはかなり簡単です。
+コレクションのうち、次のミューテーションの引数は簡単に洗い出すことができます。
+
+- `delete`、`publish`、`unpublish` は全て単純に一つのコレクションIDが必要です。
+- `addProducts`と`removeProducts`はどちらもコレクションIDと商品のID一覧が必要です。
+
+これで設計すべき入力は次の3つの"複雑な"ものだけに絞られました。
+
 - create
 - update
 - reorderProducts
 
-Let's start with create. A very naive input might look kind of like our original
-naive collection model when we started, but we can already do better than that.
-Based on our final collection model and the discussion of relationships above,
-we can start with something like this:
+createから見ていきましょう。かなり愚直に考えると入力はもとの愚直なコレクションモデルのように見えるかもれませんが、
+そのモデルよりはすでにうまく設計できるようになっています。最終的なコレクションモデルと上述のリレーションに関する議論をベースにすると、
+以下のようなものから始めることができます。
 
 ```graphql
 type Mutation {
@@ -680,16 +676,9 @@ input CollectionRuleInput {
   value: String!
 }
 ```
+まずネーミングに関して一つ述べておくと、全てのミューテーションは、`<action>Collection`の形のほうが英語ではより自然なのに、あえて`collection<Action>`の形の名前になっていることに気づいた方もいるでしょう。残念ながら、GraphQLはミューテーションをグループ化したり整理する方法を提供していないため、回避策としてアルファベット順を使用します。コアな型を最初に置くことで、すべての関連するミューテーションが最終的なリストにまとめられます。
 
-First a quick note on naming: you'll notice that we named all of our mutations
-in the form `collection<Action>` rather than the more naturally-English
-`<action>Collection`. Unfortunately, GraphQL does not provide a method for
-grouping or otherwise organizing mutations, so we are forced into
-alphabetization as a workaround. Putting the core type first ensures that all of
-the related mutations group together in the final list.
-
-*Rule #17: Prefix mutation names with the object they are mutating for
- alphabetical grouping (e.g. use `orderCancel` instead of `cancelOrder`).*
+*ルール17: アルファベット順でまとめるために、ミューテーションの名前の先頭にミューテーションを施すオブジェクトの名前を付けてください (例:`cancelOrder`ではなく`orderCancel`)。*
 
 ### Input: Scalars
 
