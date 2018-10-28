@@ -692,28 +692,21 @@ input CollectionRuleInput {
 
 *ルール18: 入力フィールドは、ミューテーションの処理に意味的に必要な場合のみ、必須フィールドにしてください。*
 
-`description`のもう一つの問題は型にあります。すでに強く型付けされているので (`String`ではなく`HTML`)、これは直感的でないように見えるかもしれません。
-The other issue with `description` is its type; this may seem counter-intuitive
-since it is already strongly-typed (`HTML` instead of `String`) and we've been
-all about strong typing so far. But again, inputs behave a little differently.
-Validation of strong typing on input happens at the GraphQL layer before any
-"userspace" code gets run, which means that realistically clients have to deal
-with two layers of errors: GraphQL-layer validation errors, and business-layer
-validation errors (for example something like: you've reached the limit of
-collections you can create with your current storage). In order to simplify this
-process, we intentionally weakly type input fields when it might be difficult
-for the client to validate up-front. This lets the business-logic side handle
-all of the validation, and lets the client only deal with errors from one spot.
+`description`のもう一つの問題は型にあります。すでに強く型付けされていますし、(`String`ではなく`HTML`)、このチュートリアルではここまでずっと強い型付けでやってきたので、これは直感的でないように見えるかもしれません。
+しかし、もう一度いいますが、入力は出力とは挙動が少し違います。
+入力における強い型付けのバリデーションは「ユーザースペース」のコードが実行される前にGraphQLのレイヤーで行われます。
+つまり、現実的にはクライアントは２つのレイヤーでのエラーを扱わなければならないということです。
+1つは、GraphQLレイヤーのバリデーションエラー。もう一つは、ビジネスレイヤーのバリデーションエラー(例えば、現在のストレージで作成できるコレクションの上限に達しました、みたいな)です。このプロセスを簡略化するために、クライアントが前のレイヤーでバリデーションするのが難しい場合は、
+入力フィールドを意図的に弱く型付けします。これによって、ビジネスロジック側で全てのバリデーションができ、
+クライアントは一箇所からのエラーのみを扱えばよいようになります。
 
-*Rule #19: Use weaker types for inputs (e.g. `String` instead of `Email`) when
- the format is unambiguous and client-side validation is complex. This lets the
- server run all non-trivial validations at once and return the errors in a
- single place in a single format, simplifying the client.*
+*ルール19: フォーマットが曖昧でクライアント側のバリデーションが複雑な場合、入力にはより弱い型を使用します（例えば `Email`ではなく` String`）。これにより、サーバーはすべての複雑なバリデーションを一度に実行し、エラーを単一の形式で一箇所に返すことができ、クライアントを簡素化します。*
 
-It is important to note, though, that this is not an invitation to weakly-type
-all your inputs. We still use strongly-typed enums for the `field` and
-`relation` values on our rule input, and we would still use strong typing for
-certain other inputs like `DateTime`s if we had any in this example. The key
+注意したいのは、全ての入力を弱く型付けしたほうが良いわけではないということです。
+ルールの入力値である`field`や`relation`には強い型である列挙型を使いますし、
+仮に本チュートリアルで他の入力に`DateTime`のようなものあれば強い型を使うでしょう。
+
+The key
 differentiating factors are the complexity of client-side validation, and the
 ambiguity of the format. HTML is a well-defined, unambiguous specification, but
 is quite complex to validate. On the other hand, there are hundreds of ways to
