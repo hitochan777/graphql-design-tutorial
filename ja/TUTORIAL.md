@@ -710,9 +710,9 @@ input CollectionRuleInput {
 
 *Rule #20: フォーマットが曖昧でクライアント側のバリデーションがシンプルな場合は、入力に強い型 (例: `String`の代わりに`DateTime`)を使うようにしてください。これにより、わかりやすくなり、より厳しい入力制御を使うようにクライアントに促します。（例: フリーテキストフィールドの代わりに日付選択ウィジェットなど）*
 
-### Input: Structure, Part 2
+### 入力: 構造 パート2
 
-Continuing on to the update mutation, it might look something like this:
+続いて更新するミューテーションを見ていきましょう。次のように書けるでしょう。
 
 ```graphql
 type Mutation {
@@ -722,24 +722,22 @@ type Mutation {
 }
 ```
 
-You'll note that this is very similar to our create mutation, with two
-differences: an `id` argument was added which determines which collection to
-update, and `title` is no longer required since the collection must already have
-one.  Ignoring the title's required status for a moment our example mutations
-have four duplicate arguments, and a complete collections model would include
-quite a few more.
+作成のミューテーションにかなり似ていることに気づいた方もいるかもしれません。
+違いは、更新するコレクションを決めるために引数`id`が追加されているのと、`title`はすでに存在しているはずなので
+必須項目ではなくなっているという点です。
+一時的にタイトルの必須項目という制限を無視すると、作成と更新のミューテーションは重複している引数が4つあります。
+実際のコレクションモデルではもっと多くの重複があるでしょう。
 
-While there are some arguments for leaving these mutations as-is, we have
-decided that situations like this call for DRYing up the common portions of the
-arguments, even at the cost of requiredness. This has a couple of advantages:
-- We end up with a single input object representing the concept of a collection
-  and mirroring the single `Collection` type our schema already has.
-- Clients can share code between their create and update forms (a common
-  pattern) because they end up manipulating the same kind of input object.
-- Mutations remain slim and readable with only a couple of top-level arguments.
+これらのミューテーションをそのまま残しておくために必要な引数はありますが、
+このような状況では、必須項目という情報を失うコストを考慮しても、引数の共通な部分をDRYする必要があると考えました。
+これにはいくつかの利点があります。
 
-The primary cost, of course, is that it's no longer clear from the schema that
-the title is required on creation. Our schema ends up looking like this:
+- コレクションのコンセプトを表し、既存のスキーマにある`Collection`型をミラーリングした一つの入力オブジェクトだけで済むようになりました。
+- 同じ種類の入力オブジェクトを操作していることになるので、クライアントは作成と更新のフォーム間でコードを共有できるようになりました。
+- ミューテーションが、トップレベルの引数が数個のみになることで、簡素化され読みやすくなりました。
+
+もちろん、スキーマからはタイトルが作成時に必須項目かどうかはもはや分からなくなっているのは大きなコストです。
+スキーマは最終的に以下のようになりました。
 
 ```graphql
 type Mutation {
@@ -756,8 +754,7 @@ input CollectionInput {
 }
 ```
 
-*Rule #21: Structure mutation inputs to reduce duplication, even if this
- requires relaxing requiredness constraints on certain fields.*
+*ルール21: 特定のフィールドで必須項目の制約を緩和する必要がある場合でも、重複を減らすようにミューテーションの入力を構造化してください。*
 
 ### Output
 
