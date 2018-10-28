@@ -758,15 +758,6 @@ input CollectionInput {
 
 ### 出力
 
-The final design question we need to deal with is the return value of our
-mutations. Typically mutations can succeed or fail, and while GraphQL does
-include explicit support for query-level errors, these are not ideal for
-business-level mutation failures. Instead, we reserve these top-level errors for
-failures of the client (e.g. requesting a non-existant field) rather than of the
-user. As such, each mutation should define a "payload" type which includes a
-user-errors field in addition to any other values that might be useful. For
-create, that might look like this:
-
 対処すべき最終的な設計上の問題は、ミューテーションの戻り値です。通常、ミューテーションの結果は成功または失敗のどちらかです。GraphQLはクエリレベルのエラーを明示的にサポートしていますが、ビジネスレベルのミューテーションの失敗には理想的ではありません。代わりに、ユーザーではなくクライアントの失敗（例: 存在しないフィールドのリクエスト）のために、これらのトップレベルのエラーを取っておきます。このように、各ミューテーションは、便利かもしれない他のフィールドに加えて、ユーザエラーフィールドを含む「ペイロード」タイプを定義すべきです。コレクションの作成の場合は、次のようになります。
 
 ```graphql
