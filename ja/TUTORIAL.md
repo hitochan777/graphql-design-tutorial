@@ -706,17 +706,9 @@ input CollectionRuleInput {
 ルールの入力値である`field`や`relation`には強い型である列挙型を使いますし、
 仮に本チュートリアルで他の入力に`DateTime`のようなものあれば強い型を使うでしょう。
 
-The key
-differentiating factors are the complexity of client-side validation, and the
-ambiguity of the format. HTML is a well-defined, unambiguous specification, but
-is quite complex to validate. On the other hand, there are hundreds of ways to
-represent a date or time as a string, all of them reasonably simple, so it
-benefits from a strong scalar type to specify which format we expect.
+違いとなる大きな要因は、クライアント側のバリデーションの複雑さとフォーマットの曖昧さです。 HTMLはしっかりと定義されており、明確な仕様ですが、バリデーションするのは非常に複雑です。一方、文字列として日付や時刻を表現するには数百の方法がありますが、それらのすべては比較的簡単です。したがって、強いスカラー型を用いて期待するフィーマットを指定することは大きな利点となります。
 
-*Rule #20: Use stronger types for inputs (e.g. `DateTime` instead of `String`)
- when the format may be ambiguous and client-side validation is simple. This
- provides clarity and encourages clients to use stricter input controls (e.g. a
- date-picker widget instead of a free-text field).*
+*Rule #20: フォーマットが曖昧でクライアント側のバリデーションがシンプルな場合は、入力に強い型 (例: `String`の代わりに`DateTime`)を使うようにしてください。これにより、わかりやすくなり、より厳しい入力制御を使うようにクライアントに促します。（例: フリーテキストフィールドの代わりに日付選択ウィジェットなど）*
 
 ### Input: Structure, Part 2
 
