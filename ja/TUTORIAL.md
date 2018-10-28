@@ -756,7 +756,7 @@ input CollectionInput {
 
 *ルール21: 特定のフィールドで必須項目の制約を緩和する必要がある場合でも、重複を減らすようにミューテーションの入力を構造化してください。*
 
-### Output
+### 出力
 
 The final design question we need to deal with is the return value of our
 mutations. Typically mutations can succeed or fail, and while GraphQL does
@@ -767,6 +767,8 @@ user. As such, each mutation should define a "payload" type which includes a
 user-errors field in addition to any other values that might be useful. For
 create, that might look like this:
 
+対処すべき最終的な設計上の問題は、ミューテーションの戻り値です。通常、ミューテーションの結果は成功または失敗のどちらかです。GraphQLはクエリレベルのエラーを明示的にサポートしていますが、ビジネスレベルのミューテーションの失敗には理想的ではありません。代わりに、ユーザーではなくクライアントの失敗（例: 存在しないフィールドのリクエスト）のために、これらのトップレベルのエラーを取っておきます。このように、各ミューテーションは、便利かもしれない他のフィールドに加えて、ユーザエラーフィールドを含む「ペイロード」タイプを定義すべきです。コレクションの作成の場合は、次のようになります。
+
 ```graphql
 type CollectionCreatePayload {
   userErrors: [UserError!]!
@@ -776,24 +778,19 @@ type CollectionCreatePayload {
 type UserError {
   message: String!
 
-  # Path to input field which caused the error.
+  # エラーの原因となる入力フィールドへのパス
   field: [String!]
 }
 ```
 
-Here, a successful mutation would return an empty list for `userErrors` and
-would return the newly-created collection for the `collection` field. An
-unsuccessful one would return one or more `UserError` objects, and null for the
-collection.
+ここで、ミューテーションが成功すれば、`userErrors`は空のリスト、`collection`は新しく作成されたコレクションとして返却されます。
+失敗すれば1つ以上の`UserError`オブジェクトと、nullのコレクションが返却されます。
 
-*Rule #22: Mutations should provide user/business-level errors via a
- `userErrors` field on the mutation payload. The top-level query errors entry is
- reserved for client and server-level errors.*
+*ルール22: ミューテーションはペイロードの`userErrors`フィールドを通じてユーザー/ビジネスレベルのエラー返すべきです。トップレベルのクエリエラーのエントリーはクライアントとサーバーレベルのエラーで使われるべきです。*
 
-In many implementations, much of this structure is provided automatically and
-all you will have to define is the `collection` return field.
+多くの実装においては、このような構造のほとんどは自動的に提供されているので、私達は`collection`のフィールドを定義するだけでよいことが多いです。
 
-For the update mutation, we follow exactly the same pattern:
+更新のミューテーションも全く同じパターンに従います。
 
 ```graphql
 type CollectionUpdatePayload {
@@ -802,12 +799,10 @@ type CollectionUpdatePayload {
 }
 ```
 
-It's worth noting that `collection` is still nullable even here, since if the
-provided ID doesn't represent a valid collection there is no collection to
-return.
+ここで重要なのは、`collection`はここでさえもnull可能性があるということです。
+なぜなら、提供されたIDが有効なこれうションを表していない場合、返すべきコレクションはないからです。
 
-*Rule #23: Most payload fields for a mutation should be nullable, unless there
- is really a value to return in every possible error case.*
+*ルール23: どのようなエラーの場合でも返す値が本当にある場合を除き、ミューテーションにおけるペイロードのたいていのフィールドはnullを許可すべきです。*
 
 ## おわりに
 
