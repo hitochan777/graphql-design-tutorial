@@ -680,23 +680,19 @@ input CollectionRuleInput {
 
 *ルール17: アルファベット順でまとめるために、ミューテーションの名前の先頭にミューテーションを施すオブジェクトの名前を付けてください (例:`cancelOrder`ではなく`orderCancel`)。*
 
-### Input: Scalars
+### 入力: スカラー
 
-This draft is a lot better than a completely naive approach, but it still isn't
-perfect. In particular, the `description` input field has a couple of issues. A
-non-null `HTML` field makes sense for the output of a collection's description,
-but it doesn't work as well for input for a couple of reasons. First-off, while
-`!` denotes non-nullability on output, it doesn't mean quite the same thing on
-input; instead it denotes more the concept of whether a field is "required". A
-required field is one the client must provide in order for the request to
-proceed, and this isn't true for `description`. We don't want to prevent clients
-from creating collections if they don't provide a description (or equivalently,
-we don't want to force them to provide a useless `""`), so we should make
-`description` non-required.
+これまでで得られたスキーマのドラフトは完全にナイーブなアプローチよりもかなり良くなっていますが、
+まだ完璧ではありません。特に、入力フィールド`descripton`には幾つかの問題があります。
+`HTML`がnull不可能というのは、コレクションの説明文が出力値である場合には理にかなっていますが、
+入力の場合には次の理由から、あまりうまくいきません。まず、 `!`は出力ではnull不可能性を意味しているのですが、
+入力では同じことは意味しません。どちらかというと、フィールドが「必須」であるかどうかの概念を示していると言って良いでしょう。
+必須フィールドはリクエストが先に進むためにクライアントが提供しなければならないものですが、`description`は必須ではありません。
+説明文を提供しないという理由だけでクライアントがコレクションを作れないという事態はあってほしくありません (もしくは、クライアントに意味のない`""`の提供を余儀なくさせるようなことはしたくありません)。なので、`description`を必須でなくすべきです。
 
-*Rule #18: Only make input fields required if they're actually semantically
- required for the mutation to proceed.*
+*ルール18: 入力フィールドは、ミューテーションの処理に意味的に必要な場合のみ、必須フィールドにしてください。*
 
+`description`のもう一つの問題は型にあります。すでに強く型付けされているので (`String`ではなく`HTML`)、これは直感的でないように見えるかもしれません。
 The other issue with `description` is its type; this may seem counter-intuitive
 since it is already strongly-typed (`HTML` instead of `String`) and we've been
 all about strong typing so far. But again, inputs behave a little differently.
@@ -831,9 +827,7 @@ return.
 *Rule #23: Most payload fields for a mutation should be nullable, unless there
  is really a value to return in every possible error case.*
 
-## Conclusion
+## おわりに
 
-Thank you for reading our tutorial! Hopefully by this point you have a solid
-idea of how to design a good GraphQL API.
-
-Once you've designed an API you're happy with, it's time to implement it!
+チュートリアルを読んでいただきありがとうございました! 現時点でGraphQL APIの設計方法に対して十分に理解できているのであれば嬉しいです。
+満足のできるAPIが設計できれば、あとは実装するだけです!
